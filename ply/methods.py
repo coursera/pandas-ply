@@ -3,7 +3,14 @@ added to panda objects. The methods in this module should not be used directly.
 Instead, the function `install_ply` should be used to attach them to the pandas
 classes."""
 
-import symbolic
+import sys
+if (sys.version_info > (3, 0)):
+    import functools
+    reduce_me = functools.reduce
+else:
+    reduce_me = reduce
+
+from . import symbolic
 
 pandas = None
 
@@ -46,7 +53,7 @@ def _ply_where(self, *conditions):
 
     evalled_conditions = [symbolic.to_callable(condition)(self)
                           for condition in conditions]
-    anded_evalled_conditions = reduce(
+    anded_evalled_conditions = reduce_me(
         lambda x, y: x & y, evalled_conditions)
     return self[anded_evalled_conditions]
 
@@ -138,7 +145,11 @@ def _ply_select(self, *args, **kwargs):
     old_chained_assignment = pandas.options.mode.chained_assignment
     pandas.options.mode.chained_assignment = None
 
-    for column_name, column_value in kwargs.iteritems():
+    if (sys.version_info > (3, 0)):
+        kwarg_i = kwargs.items
+    else:
+        kwarg_i = kwargs.iteritems
+    for column_name, column_value in kwarg_i():
         evaluated_value = symbolic.to_callable(column_value)(self)
         # TODO: verify that evaluated_value is a series!
         if column_name == 'index':
