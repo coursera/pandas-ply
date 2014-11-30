@@ -3,7 +3,7 @@ added to panda objects. The methods in this module should not be used directly.
 Instead, the function `install_ply` should be used to attach them to the pandas
 classes."""
 
-import symbolic
+from . import symbolic
 
 pandas = None
 
