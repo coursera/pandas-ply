@@ -4,6 +4,11 @@ Instead, the function `install_ply` should be used to attach them to the pandas
 classes."""
 
 import sys
+if (sys.version_info > (3, 0)):
+    import functools
+    reduce_me = functools.reduce
+else:
+    reduce_me = reduce
 
 from . import symbolic
 
@@ -48,7 +53,7 @@ def _ply_where(self, *conditions):
 
     evalled_conditions = [symbolic.to_callable(condition)(self)
                           for condition in conditions]
-    anded_evalled_conditions = reduce(
+    anded_evalled_conditions = reduce_me(
         lambda x, y: x & y, evalled_conditions)
     return self[anded_evalled_conditions]
 
