@@ -2,6 +2,7 @@
 provide as arguments to **pandas-ply**'s methods (in place of lambda
 expressions)."""
 
+import sys
 
 class Expression:
     """`Expression` is the (abstract) base class for symbolic expressions.
@@ -55,10 +56,10 @@ class Symbol(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'Symbol._eval', repr(self)
+            print ('Symbol._eval', repr(self))
         result = context[self._name]
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print ('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
@@ -75,11 +76,11 @@ class GetAttr(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'GetAttr._eval', repr(self)
+            print ('GetAttr._eval', repr(self))
         evaled_obj = eval_if_symbolic(self._obj, context, **options)
         result = getattr(evaled_obj, self._name)
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print ('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
@@ -99,15 +100,20 @@ class Call(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'Call._eval', repr(self)
+            print ('Call._eval', repr(self))
         evaled_func = eval_if_symbolic(self._func, context, **options)
         evaled_args = [eval_if_symbolic(v, context, **options)
                        for v in self._args]
+        if (sys.version_info > (3, 0)):
+            kwarg_j = self._kwargs.items
+        else:
+            kwarg_j = self._kwargs.iteritems
+
         evaled_kwargs = {k: eval_if_symbolic(v, context, **options)
-                         for k, v in self._kwargs.iteritems()}
+                         for k, v in kwarg_j()}
         result = evaled_func(*evaled_args, **evaled_kwargs)
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print ('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
