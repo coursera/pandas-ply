@@ -55,10 +55,10 @@ class Symbol(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'Symbol._eval', repr(self)
+            print ('Symbol._eval', repr(self))
         result = context[self._name]
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print ('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
@@ -79,7 +79,7 @@ class GetAttr(Expression):
         evaled_obj = eval_if_symbolic(self._obj, context, **options)
         result = getattr(evaled_obj, self._name)
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print ('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
@@ -107,7 +107,7 @@ class Call(Expression):
                          for k, v in self._kwargs.iteritems()}
         result = evaled_func(*evaled_args, **evaled_kwargs)
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print ('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
