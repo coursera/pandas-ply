@@ -2,6 +2,7 @@
 provide as arguments to **pandas-ply**'s methods (in place of lambda
 expressions)."""
 
+import sys
 
 class Expression:
     """`Expression` is the (abstract) base class for symbolic expressions.
@@ -103,8 +104,13 @@ class Call(Expression):
         evaled_func = eval_if_symbolic(self._func, context, **options)
         evaled_args = [eval_if_symbolic(v, context, **options)
                        for v in self._args]
+        if (sys.version_info > (3, 0)):
+            kwarg_j = self._kwargs.items
+        else:
+            kwarg_j = self._kwargs.iteritems
+
         evaled_kwargs = {k: eval_if_symbolic(v, context, **options)
-                         for k, v in self._kwargs.iteritems()}
+                         for k, v in kwarg_j()}
         result = evaled_func(*evaled_args, **evaled_kwargs)
         if options.get('log'):
             print ('Returning', repr(self), '=>', repr(result))
