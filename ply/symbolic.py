@@ -75,7 +75,7 @@ class GetAttr(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'GetAttr._eval', repr(self)
+            print ('GetAttr._eval', repr(self))
         evaled_obj = eval_if_symbolic(self._obj, context, **options)
         result = getattr(evaled_obj, self._name)
         if options.get('log'):
@@ -99,7 +99,7 @@ class Call(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'Call._eval', repr(self)
+            print ('Call._eval', repr(self))
         evaled_func = eval_if_symbolic(self._func, context, **options)
         evaled_args = [eval_if_symbolic(v, context, **options)
                        for v in self._args]
