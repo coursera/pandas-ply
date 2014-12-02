@@ -6,6 +6,7 @@ setup(
     author_email = 'pandas-ply@coursera.org',
     packages = [
         'ply',
+        'ply.vendor',
     ],
     description = 'functional data manipulation for pandas',
     long_description = open('README.rst').read(),
