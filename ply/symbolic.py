@@ -2,8 +2,11 @@
 provide as arguments to **pandas-ply**'s methods (in place of lambda
 expressions)."""
 
+from .vendor.six import print_
+from .vendor.six import iteritems
 
-class Expression:
+
+class Expression(object):
     """`Expression` is the (abstract) base class for symbolic expressions.
     Symbolic expressions are encoded representations of Python expressions,
     kept on ice until you are ready to evaluate them. Operations on
@@ -31,9 +34,6 @@ class Expression:
     def __repr__(self):
         raise NotImplementedError
 
-    def __coerce__(self, other):
-        return None
-
     def __getattr__(self, name):
         """Construct a symbolic representation of `getattr(self, name)`."""
         return GetAttr(self, name)
@@ -41,6 +41,40 @@ class Expression:
     def __call__(self, *args, **kwargs):
         """Construct a symbolic representation of `self(*args, **kwargs)`."""
         return Call(self, args=args, kwargs=kwargs)
+
+# New-style classes skip __getattr__ for magic methods, so we must add them
+# explicitly:
+
+_magic_method_names = [
+    '__abs__', '__add__', '__and__', '__cmp__', '__complex__', '__contains__',
+    '__delattr__', '__delete__', '__delitem__', '__delslice__', '__div__',
+    '__divmod__', '__enter__', '__eq__', '__exit__', '__float__',
+    '__floordiv__', '__ge__', '__get__', '__getitem__', '__getslice__',
+    '__gt__', '__hash__', '__hex__', '__iadd__', '__iand__', '__idiv__',
+    '__ifloordiv__', '__ilshift__', '__imod__', '__imul__', '__index__',
+    '__int__', '__invert__', '__ior__', '__ipow__', '__irshift__', '__isub__',
+    '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__', '__long__',
+    '__lshift__', '__lt__', '__mod__', '__mul__', '__ne__', '__neg__',
+    '__nonzero__', '__oct__', '__or__', '__pos__', '__pow__', '__radd__',
+    '__rand__', '__rcmp__', '__rdiv__', '__rdivmod__', '__repr__',
+    '__reversed__', '__rfloordiv__', '__rlshift__', '__rmod__', '__rmul__',
+    '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__',
+    '__rtruediv__', '__rxor__', '__set__', '__setitem__', '__setslice__',
+    '__str__', '__sub__', '__truediv__', '__unicode__', '__xor__',
+]
+
+# Not included: [
+#   '__call__', '__coerce__', '__del__', '__dict__', '__getattr__',
+#   '__getattribute__', '__init__', '__new__', '__setattr__'
+# ]
+
+def _get_sym_magic_method(name):
+    def magic_method(self, *args, **kwargs):
+        return Call(GetAttr(self, name), args, kwargs)
+    return magic_method
+
+for name in _magic_method_names:
+    setattr(Expression, name, _get_sym_magic_method(name))
 
 
 # Here are the varieties of atomic / compound Expression.
@@ -55,10 +89,10 @@ class Symbol(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'Symbol._eval', repr(self)
+            print_('Symbol._eval', repr(self))
         result = context[self._name]
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print_('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
@@ -75,11 +109,11 @@ class GetAttr(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'GetAttr._eval', repr(self)
+            print_('GetAttr._eval', repr(self))
         evaled_obj = eval_if_symbolic(self._obj, context, **options)
         result = getattr(evaled_obj, self._name)
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print_('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):
@@ -99,15 +133,15 @@ class Call(Expression):
 
     def _eval(self, context, **options):
         if options.get('log'):
-            print 'Call._eval', repr(self)
+            print_('Call._eval', repr(self))
         evaled_func = eval_if_symbolic(self._func, context, **options)
         evaled_args = [eval_if_symbolic(v, context, **options)
                        for v in self._args]
         evaled_kwargs = {k: eval_if_symbolic(v, context, **options)
-                         for k, v in self._kwargs.iteritems()}
+                         for k, v in iteritems(self._kwargs)}
         result = evaled_func(*evaled_args, **evaled_kwargs)
         if options.get('log'):
-            print 'Returning', repr(self), '=>', repr(result)
+            print_('Returning', repr(self), '=>', repr(result))
         return result
 
     def __repr__(self):

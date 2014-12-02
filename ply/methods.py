@@ -3,9 +3,12 @@ added to panda objects. The methods in this module should not be used directly.
 Instead, the function `install_ply` should be used to attach them to the pandas
 classes."""
 
-import symbolic
+from . import symbolic
+from .vendor.six import iteritems
+from .vendor.six.moves import reduce
 
 pandas = None
+
 
 def install_ply(pandas_to_use):
     """Install `pandas-ply` onto the objects in a copy of `pandas`."""
@@ -138,7 +141,7 @@ def _ply_select(self, *args, **kwargs):
     old_chained_assignment = pandas.options.mode.chained_assignment
     pandas.options.mode.chained_assignment = None
 
-    for column_name, column_value in kwargs.iteritems():
+    for column_name, column_value in iteritems(kwargs):
         evaluated_value = symbolic.to_callable(column_value)(self)
         # TODO: verify that evaluated_value is a series!
         if column_name == 'index':
@@ -169,7 +172,7 @@ def _ply_select_for_groups(self, **kwargs):
 
     to_return = pandas.DataFrame()
 
-    for column_name, column_value in kwargs.iteritems():
+    for column_name, column_value in iteritems(kwargs):
         evaluated_value = symbolic.to_callable(column_value)(self)
         if column_name == 'index':
             to_return.index = evaluated_value
