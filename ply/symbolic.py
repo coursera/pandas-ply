@@ -137,8 +137,8 @@ class Call(Expression):
         evaled_func = eval_if_symbolic(self._func, context, **options)
         evaled_args = [eval_if_symbolic(v, context, **options)
                        for v in self._args]
-        evaled_kwargs = {k: eval_if_symbolic(v, context, **options)
-                         for k, v in iteritems(self._kwargs)}
+        evaled_kwargs = dict((k, eval_if_symbolic(v, context, **options))
+                             for k, v in iteritems(self._kwargs))
         result = evaled_func(*evaled_args, **evaled_kwargs)
         if options.get('log'):
             print_('Returning', repr(self), '=>', repr(result))
