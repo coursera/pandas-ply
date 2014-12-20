@@ -22,7 +22,7 @@ The most common way to express this in **pandas** is probably:
   grouped_flights = flights.groupby(['year', 'month', 'day'])
   output = pd.DataFrame()
   output['arr'] = grouped_flights.arr_delay.mean()
-  output['dep'] = grouped_flights.arr_delay.mean()
+  output['dep'] = grouped_flights.dep_delay.mean()
   filtered_output = output[(output.arr > 30) & (output.dep > 30)]
 
 **pandas-ply** lets you instead write:
