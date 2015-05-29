@@ -138,18 +138,15 @@ def _ply_select(self, *args, **kwargs):
 
     # Temporarily disable SettingWithCopyWarning, as setting columns on a
     # copy (`to_return`) is intended here.
-    old_chained_assignment = pandas.options.mode.chained_assignment
-    pandas.options.mode.chained_assignment = None
+    with pandas.option_context('mode.chained_assignment', None):
 
-    for column_name, column_value in iteritems(kwargs):
-        evaluated_value = symbolic.to_callable(column_value)(self)
-        # TODO: verify that evaluated_value is a series!
-        if column_name == 'index':
-            to_return.index = evaluated_value
-        else:
-            to_return[column_name] = evaluated_value
-
-    pandas.options.mode.chained_assignment = old_chained_assignment
+        for column_name, column_value in iteritems(kwargs):
+            evaluated_value = symbolic.to_callable(column_value)(self)
+            # TODO: verify that evaluated_value is a series!
+            if column_name == 'index':
+                to_return.index = evaluated_value
+            else:
+                to_return[column_name] = evaluated_value
 
     return to_return
 
