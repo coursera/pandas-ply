@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
     name = 'pandas-ply',
-    version = '0.1.2',
+    version = '0.2.0',
     author = 'Coursera Inc.',
     author_email = 'pandas-ply@coursera.org',
     packages = [
