@@ -6,8 +6,8 @@ else:
 
 from pandas.util.testing import assert_frame_equal
 from pandas.util.testing import assert_series_equal
-from ply.methods import install_ply
-from ply.symbolic import X
+from pandas_ply.methods import install_ply
+from pandas_ply.symbolic import X
 import pandas as pd
 
 install_ply(pd)

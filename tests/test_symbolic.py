@@ -5,12 +5,12 @@ else:
     import unittest
 import mock
 
-from ply.symbolic import Call
-from ply.symbolic import GetAttr
-from ply.symbolic import Symbol
-from ply.symbolic import eval_if_symbolic
-from ply.symbolic import sym_call
-from ply.symbolic import to_callable
+from pandas_ply.symbolic import Call
+from pandas_ply.symbolic import GetAttr
+from pandas_ply.symbolic import Symbol
+from pandas_ply.symbolic import eval_if_symbolic
+from pandas_ply.symbolic import sym_call
+from pandas_ply.symbolic import to_callable
 
 
 class ExpressionTest(unittest.TestCase):
