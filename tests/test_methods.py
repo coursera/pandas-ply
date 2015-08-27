@@ -1,4 +1,8 @@
-import unittest
+import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 from pandas.util.testing import assert_frame_equal
 from pandas.util.testing import assert_series_equal
@@ -186,11 +190,3 @@ class PlySelectForGroupsTest(unittest.TestCase):
             pd.DataFrame(
                 {'count': [1, 2, 2]},
                 index=pd.Index([0, 1, 4], name='xsq')))
-
-
-if __name__ == '__main__':
-    try:
-        from colour_runner.runner import ColourTextTestRunner
-        unittest.main(verbosity=2, testRunner=ColourTextTestRunner)
-    except ImportError:
-        unittest.main(verbosity=2)

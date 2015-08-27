@@ -1,4 +1,8 @@
-import unittest
+import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 import mock
 
 from ply.symbolic import Call
@@ -238,11 +242,3 @@ class IntegrationTest(unittest.TestCase):
         func = to_callable(expr)
 
         self.assertEqual(func(X=3, Y=4), 5)
-
-
-if __name__ == '__main__':
-    try:
-        from colour_runner.runner import ColourTextTestRunner
-        unittest.main(verbosity=2, testRunner=ColourTextTestRunner)
-    except ImportError:
-        unittest.main(verbosity=2)
