@@ -66,7 +66,7 @@ Typical use of **pandas-ply** starts with:
 .. code:: python
 
   import pandas as pd
-  from ply import install_ply, X, sym_call
+  from pandas_ply import install_ply, X, sym_call
 
   install_ply(pd)
 
