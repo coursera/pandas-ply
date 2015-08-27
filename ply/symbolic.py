@@ -216,6 +216,10 @@ def sym_call(func, *args, **kwargs):
     expression `symbolic` as a parameter (if `func` is not itself symbolic).
     So instead, we write `sym_call(func, symbolic)`.
 
+    Tip: If the main argument of the function is a (symbolic) DataFrame, then
+    pandas' `pipe` method takes care of this problem without `sym_call`. For
+    instance, while `np.sqrt(X)` won't work, `X.pipe(np.sqrt)` will.
+
     Args:
         func: Function to call on evaluation (can be symbolic).
         `*args`: Arguments to provide to `func` on evaluation (can be symbolic).
